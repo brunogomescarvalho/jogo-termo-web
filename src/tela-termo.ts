@@ -99,6 +99,9 @@ class telaTermo {
     }
 
     private gerarElementosMsgFinal(): HTMLSpanElement {
+        let divMsg = document.getElementById('divMensagemFinal');
+        if (divMsg)
+            this.pnlConteudo.removeChild(divMsg);
 
         let div = document.createElement('div');
         div.id = "divMensagemFinal";
