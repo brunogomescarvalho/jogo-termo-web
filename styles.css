@@ -4,11 +4,15 @@ html {
   min-height: 100vh;
 }
 
+h1{
+  color: #ffffff;
+}
+
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Mitr', sans-serif;
 
   background-color: #080404;
-  color: #ffffff;
+
 }
 
 .conteudo {
@@ -18,6 +22,8 @@ body {
 
   display: grid;
   place-items: center;
+
+  color: #ffffff;
 }
 
 .grid-termo {
@@ -89,4 +95,14 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.modal {
+  font-family: 'Mitr', sans-serif;
+}
+
+.tentativas {
+  background-color: lightgray;
+  padding: 1px 6px;
+  text-align: right;
 }

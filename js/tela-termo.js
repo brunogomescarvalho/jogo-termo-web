@@ -1,5 +1,7 @@
 import { acervo } from "./acervo-termo.js";
 import { jogo, resultado } from "./jogo-termo.js";
+import { Progresso } from "./progresso-termo.js";
+import { Repositorio } from "./Repositorio.js";
 class telaTermo {
     constructor(jogo) {
         this.maxCol = 5;
@@ -8,6 +10,8 @@ class telaTermo {
         this.coluna = 0;
         this.linha = 0;
         this.palavra = "";
+        this.progresso = new Progresso(new Repositorio());
+        console.log(this.progresso);
         this.jogo = jogo;
         this.atribuirEventos();
         this.pnlTermo = document.getElementById('pnlTermo');
@@ -22,16 +26,21 @@ class telaTermo {
             if (tecla.textContent != 'Enter')
                 tecla.addEventListener('click', (sender) => this.atribuirLetra(sender));
         }
+        this.btnHistorico = document.getElementById('btnHistorico');
+        this.btnHistorico.addEventListener('click', () => this.obterProgresso());
     }
     verificarJogada() {
         if (this.palavra.length !== this.maxCol)
             return;
         this.colorirCelulas();
-        if (this.jogo.acertou(this.palavra))
+        if (this.jogo.acertou(this.palavra)) {
             this.enviarMensagem(true);
+            this.salvarProgresso(true, this.linha);
+        }
         this.linha++;
         if (this.linha === this.maxRow) {
             this.enviarMensagem(false);
+            this.salvarProgresso(false);
         }
         this.limparDados();
     }
@@ -73,6 +82,7 @@ class telaTermo {
         }
     }
     gerarElementosMsgFinal() {
+        this.removerMsgFinal();
         let div = document.createElement('div');
         div.id = "divMensagemFinal";
         div.classList.add('group-mensagem');
@@ -104,10 +114,33 @@ class telaTermo {
                 letra.textContent = '';
             }
         }
+        this.removerMsgFinal();
+    }
+    removerMsgFinal() {
         const mensagemFinal = document.getElementById('divMensagemFinal');
         if (mensagemFinal) {
             this.pnlConteudo.removeChild(mensagemFinal);
         }
+    }
+    salvarProgresso(acertou, linha) {
+        this.progresso.atualizarJogada(acertou, linha);
+    }
+    obterProgresso() {
+        const progresso = this.progresso.obterDados();
+        if (!progresso)
+            return;
+        const valores = document.getElementById('valores');
+        valores.children[0].textContent = progresso.jogos.toString();
+        valores.children[1].textContent = progresso.porcentagemVitorias.toString() + "%";
+        valores.children[2].textContent = progresso.sequenciaVitorias.toString();
+        valores.children[3].textContent = progresso.melhorSequencia.toString();
+        const historico = document.getElementById('historico');
+        historico.children[1].lastChild.textContent = progresso.linhaDaJogada[0].toString();
+        historico.children[2].lastChild.textContent = progresso.linhaDaJogada[1].toString();
+        historico.children[3].lastChild.textContent = progresso.linhaDaJogada[2].toString();
+        historico.children[4].lastChild.textContent = progresso.linhaDaJogada[3].toString();
+        historico.children[5].lastChild.textContent = progresso.linhaDaJogada[4].toString();
+        historico.children[6].lastChild.textContent = progresso.erros.toString();
     }
 }
 window.addEventListener("load", () => new telaTermo(new jogo(new acervo())));
