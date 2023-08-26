@@ -1,5 +1,9 @@
 import { acervo } from "./acervo-termo.js";
 import { jogo, resultado } from "./jogo-termo.js";
+import { Progresso } from "./progresso-termo.js";
+import { IProgresso } from "./IProgresso.js";
+import { Repositorio } from "./Repositorio.js";
+
 
 class telaTermo {
     maxCol: number = 5;
@@ -13,13 +17,19 @@ class telaTermo {
     linha: number = 0;
     palavra: string = "";
     jogo: jogo;
+    progresso: Progresso;
+    btnHistorico: HTMLButtonElement;
 
 
     constructor(jogo: jogo) {
+
+        this.progresso = new Progresso(new Repositorio());
+        console.log(this.progresso)
         this.jogo = jogo;
         this.atribuirEventos();
         this.pnlTermo = document.getElementById('pnlTermo') as HTMLElement;
         this.pnlConteudo = document.getElementById('pnlConteudo') as HTMLElement;
+
     }
 
     private atribuirEventos() {
@@ -33,6 +43,9 @@ class telaTermo {
             if (tecla.textContent != 'Enter')
                 tecla.addEventListener('click', (sender) => this.atribuirLetra(sender));
         }
+
+        this.btnHistorico = document.getElementById('btnHistorico') as HTMLButtonElement;
+        this.btnHistorico.addEventListener('click', () => this.obterProgresso());
     }
 
     private verificarJogada(): void {
@@ -41,13 +54,16 @@ class telaTermo {
 
         this.colorirCelulas();
 
-        if (this.jogo.acertou(this.palavra))
+        if (this.jogo.acertou(this.palavra)) {
             this.enviarMensagem(true);
+            this.salvarProgresso(true, this.linha);
+        }
 
         this.linha++;
 
         if (this.linha === this.maxRow) {
             this.enviarMensagem(false);
+            this.salvarProgresso(false);
         }
 
         this.limparDados();
@@ -99,9 +115,7 @@ class telaTermo {
     }
 
     private gerarElementosMsgFinal(): HTMLSpanElement {
-        let divMsg = document.getElementById('divMensagemFinal');
-        if (divMsg)
-            this.pnlConteudo.removeChild(divMsg);
+        this.removerMsgFinal();
 
         let div = document.createElement('div');
         div.id = "divMensagemFinal";
@@ -141,10 +155,38 @@ class telaTermo {
                 letra.textContent = '';
             }
         }
+        this.removerMsgFinal();
+    }
+
+    private removerMsgFinal() {
         const mensagemFinal = document.getElementById('divMensagemFinal');
         if (mensagemFinal) {
             this.pnlConteudo.removeChild(mensagemFinal);
         }
+    }
+
+    private salvarProgresso(acertou: boolean, linha?: number) {
+        this.progresso.atualizarJogada(acertou, linha)
+    }
+
+    private obterProgresso() {
+
+        const progresso = this.progresso.obterDados() as IProgresso;
+        if (!progresso) return;
+
+        const valores = document.getElementById('valores') as HTMLDivElement;
+        valores.children[0].textContent = progresso.jogos.toString();
+        valores.children[1].textContent = progresso.porcentagemVitorias.toString() + "%";
+        valores.children[2].textContent = progresso.sequenciaVitorias.toString();
+        valores.children[3].textContent = progresso.melhorSequencia.toString();
+
+        const historico = document.getElementById('historico') as HTMLDivElement;
+        historico.children[1].lastChild!.textContent = progresso.linhaDaJogada[0].toString();
+        historico.children[2].lastChild!.textContent = progresso.linhaDaJogada[1].toString();
+        historico.children[3].lastChild!.textContent = progresso.linhaDaJogada[2].toString();
+        historico.children[4].lastChild!.textContent = progresso.linhaDaJogada[3].toString();
+        historico.children[5].lastChild!.textContent = progresso.linhaDaJogada[4].toString();
+        historico.children[6].lastChild!.textContent = progresso.erros.toString();
     }
 }
 
