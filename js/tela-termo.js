@@ -65,7 +65,7 @@ class telaTermo {
                     this.celulas[i].style.backgroundColor = '#ffff00fa';
                     break;
                 case resultado.Inexistente:
-                    this.celulas[i].style.backgroundColor = '#e25858b3';
+                    this.celulas[i].style.backgroundColor = '#b85e5e';
                     break;
             }
         }
