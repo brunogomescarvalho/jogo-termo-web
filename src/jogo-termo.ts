@@ -6,7 +6,7 @@ export class jogo {
     private palavra: string;
 
     constructor(private acervo: acervo) {
-        this.listaPalavras = acervo.palavras;
+        this.listaPalavras = this.acervo.palavras;
 
         this.sortearPalavra();
 
@@ -33,7 +33,7 @@ export class jogo {
     }
 
     public acertou(palavraJogada: string) {
-        return palavraJogada === this.palavra;
+        return palavraJogada == this.palavra;
     }
 
     private sortearPalavra(): void {

@@ -1,5 +1,5 @@
 import { IProgresso } from "./IProgresso";
-import { Repositorio } from "./Repositorio";
+import { Repositorio } from "./repositorio-termo";
 
 export class Progresso {
 

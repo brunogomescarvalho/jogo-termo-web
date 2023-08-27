@@ -2,6 +2,12 @@ import { IProgresso } from "./IProgresso";
 
 export class Repositorio {
 
+    public salvarDados(progresso: IProgresso): void {
+
+        const progressoEmString = JSON.stringify(progresso);
+
+        window.localStorage.setItem('progresso', progressoEmString);
+    }
 
     public obterDados(): IProgresso {
 
@@ -14,13 +20,6 @@ export class Repositorio {
         }
 
         return progresso!;
-    }
-
-    public salvarDados(progresso: IProgresso): void {
-
-        const progressoEmString = JSON.stringify(progresso);
-
-        window.localStorage.setItem('progresso', progressoEmString);
     }
 
 }

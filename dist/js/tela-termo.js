@@ -1,17 +1,17 @@
 import { acervo } from "./acervo-termo.js";
 import { jogo, resultado } from "./jogo-termo.js";
 import { Progresso } from "./progresso-termo.js";
-import { Repositorio } from "./Repositorio.js";
+import { Repositorio } from "./repositorio-termo.js";
 class telaTermo {
-    constructor(jogo) {
+    constructor(jogo, progresso) {
+        this.jogo = jogo;
+        this.progresso = progresso;
+        this.letras = [];
         this.maxCol = 5;
         this.maxRow = 5;
-        this.celulas = [];
         this.coluna = 0;
         this.linha = 0;
         this.palavra = "";
-        this.progresso = new Progresso(new Repositorio());
-        this.jogo = jogo;
         this.atribuirEventos();
         this.pnlTermo = document.getElementById('pnlTermo');
         this.pnlConteudo = document.getElementById('pnlConteudo');
@@ -30,65 +30,49 @@ class telaTermo {
         this.btnHistorico = document.getElementById('btnHistorico');
         this.btnHistorico.addEventListener('click', () => this.obterProgresso());
     }
-    corrigirInput() {
-        if (this.coluna == 0)
+    atribuirLetra(sender) {
+        if (this.palavra.length === this.maxCol)
             return;
-        let quadro = this.celulas[this.coluna - 1];
-        quadro.textContent = "";
-        this.celulas.pop();
-        this.coluna--;
-        this.palavra = this.palavra.substring(0, this.palavra.length - 1);
+        const tbLetra = this.pnlTermo
+            .children[this.linha]
+            .children[this.coluna];
+        let letra = sender.target;
+        tbLetra.textContent = letra.innerText;
+        this.palavra += letra.innerText;
+        this.letras.push(tbLetra);
+        this.coluna++;
     }
     verificarJogada() {
         if (this.palavra.length !== this.maxCol)
             return;
-        this.colorirCelulas();
+        this.colorirletras();
         if (this.jogo.acertou(this.palavra)) {
             this.enviarMensagem(true);
             this.salvarProgresso(true, this.linha);
         }
-        this.linha++;
-        if (this.linha === this.maxRow) {
-            this.enviarMensagem(false);
-            this.salvarProgresso(false);
+        else {
+            this.linha++;
+            if (this.linha === this.maxRow) {
+                this.enviarMensagem(false);
+                this.salvarProgresso(false);
+            }
         }
         this.limparDados();
     }
-    colorirCelulas() {
+    colorirletras() {
         let resultados = this.jogo.verificarJogada(this.palavra);
         for (let i = 0; i <= this.palavra.length; i++) {
             switch (resultados[i]) {
                 case resultado.Acerto:
-                    this.celulas[i].style.backgroundColor = '#0fda0fb6';
+                    this.letras[i].style.backgroundColor = '#0fda0fb6';
                     break;
                 case resultado.Erro:
-                    this.celulas[i].style.backgroundColor = '#ffff00fa';
+                    this.letras[i].style.backgroundColor = '#ffff00fa';
                     break;
                 case resultado.Inexistente:
-                    this.celulas[i].style.backgroundColor = '#b85e5e';
+                    this.letras[i].style.backgroundColor = '#b85e5e';
                     break;
             }
-        }
-    }
-    atribuirLetra(sender) {
-        if (this.palavra.length === this.maxCol)
-            return;
-        const casaJogada = this.pnlTermo
-            .children[this.linha]
-            .children[this.coluna];
-        let button = sender.target;
-        casaJogada.textContent = button.innerText;
-        this.celulas.push(casaJogada);
-        this.palavra += button.innerText;
-        this.coluna++;
-    }
-    enviarMensagem(venceu) {
-        let msg = this.gerarElementosMsgFinal();
-        if (venceu) {
-            msg.textContent = `Parabéns! Você acertou a palavra: ${this.jogo.getPalavra()}`;
-        }
-        else {
-            msg.textContent = `Fim de Jogo! A palavra era: ${this.jogo.getPalavra()}`;
         }
     }
     gerarElementosMsgFinal() {
@@ -108,6 +92,24 @@ class telaTermo {
         this.alterarStatusTeclado();
         return spanMsg;
     }
+    enviarMensagem(venceu) {
+        let msg = this.gerarElementosMsgFinal();
+        if (venceu) {
+            msg.textContent = `Parabéns! Você acertou a palavra: ${this.jogo.getPalavra()}`;
+        }
+        else {
+            msg.textContent = `Fim de Jogo! A palavra era: ${this.jogo.getPalavra()}`;
+        }
+    }
+    corrigirInput() {
+        if (this.coluna == 0)
+            return;
+        let letra = this.letras[this.coluna - 1];
+        letra.textContent = "";
+        this.letras.pop();
+        this.coluna--;
+        this.palavra = this.palavra.substring(0, this.palavra.length - 1);
+    }
     alterarStatusTeclado() {
         for (let index = 0; index < this.pnlTeclado.children.length; index++) {
             let tecla = this.pnlTeclado.children[index];
@@ -117,7 +119,13 @@ class telaTermo {
     limparDados() {
         this.coluna = 0;
         this.palavra = "";
-        this.celulas = [];
+        this.letras = [];
+    }
+    removerMsgFinal() {
+        const mensagemFinal = document.getElementById('divMensagemFinal');
+        if (mensagemFinal) {
+            this.pnlConteudo.removeChild(mensagemFinal);
+        }
     }
     reiniciarJogo() {
         this.limparDados();
@@ -133,12 +141,6 @@ class telaTermo {
         }
         this.removerMsgFinal();
         this.alterarStatusTeclado();
-    }
-    removerMsgFinal() {
-        const mensagemFinal = document.getElementById('divMensagemFinal');
-        if (mensagemFinal) {
-            this.pnlConteudo.removeChild(mensagemFinal);
-        }
     }
     salvarProgresso(acertou, linha) {
         this.progresso.atualizarJogada(acertou, linha);
@@ -162,5 +164,5 @@ class telaTermo {
         historico.children[6].lastChild.textContent = progresso.erros.toString();
     }
 }
-window.addEventListener("load", () => new telaTermo(new jogo(new acervo())));
+window.addEventListener("load", () => new telaTermo(new jogo(new acervo()), new Progresso(new Repositorio())));
 //# sourceMappingURL=tela-termo.js.map

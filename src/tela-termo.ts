@@ -2,34 +2,27 @@ import { acervo } from "./acervo-termo.js";
 import { jogo, resultado } from "./jogo-termo.js";
 import { Progresso } from "./progresso-termo.js";
 import { IProgresso } from "./IProgresso.js";
-import { Repositorio } from "./Repositorio.js";
-
+import { Repositorio } from "./repositorio-termo.js";
 
 class telaTermo {
-    maxCol: number = 5;
-    maxRow: number = 5;
-    celulas: HTMLElement[] = [];
+  
     pnlTeclado: HTMLElement;
     btnEnter: HTMLButtonElement;
+    btnHistorico: HTMLButtonElement;
     btnBack: HTMLButtonElement;
     pnlConteudo: HTMLElement;
     pnlTermo: HTMLElement;
+    letras: HTMLElement[] = [];
+    maxCol: number = 5;
+    maxRow: number = 5;  
     coluna: number = 0;
     linha: number = 0;
     palavra: string = "";
-    jogo: jogo;
-    progresso: Progresso;
-    btnHistorico: HTMLButtonElement;
 
-
-    constructor(jogo: jogo) {
-
-        this.progresso = new Progresso(new Repositorio());
-        this.jogo = jogo;
+    constructor(private jogo: jogo, private progresso: Progresso) {
         this.atribuirEventos();
         this.pnlTermo = document.getElementById('pnlTermo') as HTMLElement;
         this.pnlConteudo = document.getElementById('pnlConteudo') as HTMLElement;
-
     }
 
     private atribuirEventos() {
@@ -50,15 +43,20 @@ class telaTermo {
         this.btnHistorico = document.getElementById('btnHistorico') as HTMLButtonElement;
         this.btnHistorico.addEventListener('click', () => this.obterProgresso());
     }
-    private corrigirInput(): any {
-        if (this.coluna == 0)
+
+    private atribuirLetra(sender: Event): void {
+        if (this.palavra.length === this.maxCol)
             return;
 
-        let quadro = this.celulas[this.coluna - 1];
-        quadro.textContent = "";
-        this.celulas.pop();
-        this.coluna--;
-        this.palavra = this.palavra.substring(0, this.palavra.length - 1);
+        const tbLetra = this.pnlTermo
+            .children[this.linha]
+            .children[this.coluna] as HTMLElement;
+
+        let letra = sender.target as (HTMLButtonElement);
+        tbLetra.textContent = letra.innerText;
+        this.palavra += letra.innerText;
+        this.letras.push(tbLetra);
+        this.coluna++;
     }
 
     private verificarJogada(): void {
@@ -66,65 +64,40 @@ class telaTermo {
         if (this.palavra.length !== this.maxCol)
             return;
 
-        this.colorirCelulas();
+        this.colorirletras();
 
         if (this.jogo.acertou(this.palavra)) {
             this.enviarMensagem(true);
             this.salvarProgresso(true, this.linha);
         }
 
-        this.linha++;
+        else {
+            this.linha++;
 
-        if (this.linha === this.maxRow) {
-            this.enviarMensagem(false);
-            this.salvarProgresso(false);
+            if (this.linha === this.maxRow) {
+                this.enviarMensagem(false);
+                this.salvarProgresso(false);
+            }
         }
 
         this.limparDados();
     }
 
-
-    private colorirCelulas() {
+    private colorirletras() {
         let resultados: resultado[] = this.jogo.verificarJogada(this.palavra);
 
         for (let i = 0; i <= this.palavra.length; i++) {
             switch (resultados[i]) {
                 case resultado.Acerto:
-                    this.celulas[i].style.backgroundColor = '#0fda0fb6'
+                    this.letras[i].style.backgroundColor = '#0fda0fb6'
                     break;
                 case resultado.Erro:
-                    this.celulas[i].style.backgroundColor = '#ffff00fa'
+                    this.letras[i].style.backgroundColor = '#ffff00fa'
                     break;
                 case resultado.Inexistente:
-                    this.celulas[i].style.backgroundColor = '#b85e5e'
+                    this.letras[i].style.backgroundColor = '#b85e5e'
                     break;
             }
-        }
-    }
-
-    private atribuirLetra(sender: Event): void {
-        if (this.palavra.length === this.maxCol)
-            return;
-
-        const casaJogada = this.pnlTermo
-            .children[this.linha]
-            .children[this.coluna] as HTMLElement;
-
-        let button = sender.target as (HTMLButtonElement);
-        casaJogada.textContent = button.innerText;
-        this.celulas.push(casaJogada);
-        this.palavra += button.innerText;
-        this.coluna++;
-    }
-
-    private enviarMensagem(venceu: boolean) {
-        let msg = this.gerarElementosMsgFinal();
-
-        if (venceu) {
-            msg.textContent = `Parabéns! Você acertou a palavra: ${this.jogo.getPalavra()}`
-        }
-        else {
-            msg.textContent = `Fim de Jogo! A palavra era: ${this.jogo.getPalavra()}`
         }
     }
 
@@ -151,6 +124,28 @@ class telaTermo {
         return spanMsg;
     }
 
+    private enviarMensagem(venceu: boolean) {
+        let msg = this.gerarElementosMsgFinal();
+
+        if (venceu) {
+            msg.textContent = `Parabéns! Você acertou a palavra: ${this.jogo.getPalavra()}`
+        }
+        else {
+            msg.textContent = `Fim de Jogo! A palavra era: ${this.jogo.getPalavra()}`
+        }
+    }
+
+    private corrigirInput(): void {
+        if (this.coluna == 0)
+            return;
+
+        let letra = this.letras[this.coluna - 1];
+        letra.textContent = "";
+        this.letras.pop();
+        this.coluna--;
+        this.palavra = this.palavra.substring(0, this.palavra.length - 1);
+    }
+
     private alterarStatusTeclado() {
         for (let index = 0; index < this.pnlTeclado.children.length; index++) {
             let tecla = this.pnlTeclado.children[index] as HTMLButtonElement;
@@ -161,7 +156,14 @@ class telaTermo {
     private limparDados() {
         this.coluna = 0;
         this.palavra = "";
-        this.celulas = [];
+        this.letras = [];
+    }
+
+    private removerMsgFinal() {
+        const mensagemFinal = document.getElementById('divMensagemFinal');
+        if (mensagemFinal) {
+            this.pnlConteudo.removeChild(mensagemFinal);
+        }
     }
 
     private reiniciarJogo() {
@@ -180,13 +182,6 @@ class telaTermo {
         }
         this.removerMsgFinal();
         this.alterarStatusTeclado();
-    }
-
-    private removerMsgFinal() {
-        const mensagemFinal = document.getElementById('divMensagemFinal');
-        if (mensagemFinal) {
-            this.pnlConteudo.removeChild(mensagemFinal);
-        }
     }
 
     private salvarProgresso(acertou: boolean, linha?: number) {
@@ -216,7 +211,7 @@ class telaTermo {
     }
 }
 
-window.addEventListener("load", () => new telaTermo(new jogo(new acervo())));
+window.addEventListener("load", () => new telaTermo(new jogo(new acervo()), new Progresso(new Repositorio())));
 
 
 
