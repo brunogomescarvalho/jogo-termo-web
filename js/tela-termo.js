@@ -11,7 +11,6 @@ class telaTermo {
         this.linha = 0;
         this.palavra = "";
         this.progresso = new Progresso(new Repositorio());
-        console.log(this.progresso);
         this.jogo = jogo;
         this.atribuirEventos();
         this.pnlTermo = document.getElementById('pnlTermo');
@@ -95,7 +94,14 @@ class telaTermo {
         button.innerText = "Recomeçar";
         button.addEventListener('click', () => this.reiniciarJogo());
         div.appendChild(button);
+        this.alterarStatusTeclado();
         return spanMsg;
+    }
+    alterarStatusTeclado() {
+        for (let index = 0; index < this.pnlTeclado.children.length; index++) {
+            let tecla = this.pnlTeclado.children[index];
+            tecla.disabled = !tecla.disabled;
+        }
     }
     limparDados() {
         this.coluna = 0;
@@ -115,6 +121,7 @@ class telaTermo {
             }
         }
         this.removerMsgFinal();
+        this.alterarStatusTeclado();
     }
     removerMsgFinal() {
         const mensagemFinal = document.getElementById('divMensagemFinal');
@@ -129,6 +136,8 @@ class telaTermo {
         const progresso = this.progresso.obterDados();
         if (!progresso)
             return;
+        console.clear();
+        console.log(progresso);
         const valores = document.getElementById('valores');
         valores.children[0].textContent = progresso.jogos.toString();
         valores.children[1].textContent = progresso.porcentagemVitorias.toString() + "%";
