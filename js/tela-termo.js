@@ -147,7 +147,6 @@ class telaTermo {
         const progresso = this.progresso.obterDados();
         if (!progresso)
             return;
-        console.clear();
         console.log(progresso);
         const valores = document.getElementById('valores');
         valores.children[0].textContent = progresso.jogos.toString();
