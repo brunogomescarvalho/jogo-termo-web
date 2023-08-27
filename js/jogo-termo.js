@@ -1,7 +1,7 @@
 export class jogo {
     constructor(acervo) {
         this.acervo = acervo;
-        this.listaPalavras = acervo.palavras;
+        this.listaPalavras = this.acervo.palavras;
         this.sortearPalavra();
         console.log(this.palavra);
     }
@@ -23,7 +23,7 @@ export class jogo {
         return resultados;
     }
     acertou(palavraJogada) {
-        return palavraJogada === this.palavra;
+        return palavraJogada == this.palavra;
     }
     sortearPalavra() {
         this.palavra = this.listaPalavras[Math.floor(Math.random() * this.listaPalavras.length + 1)]
