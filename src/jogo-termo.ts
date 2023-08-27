@@ -7,6 +7,7 @@ export class jogo {
 
     constructor(private acervo: acervo) {
         this.listaPalavras = acervo.palavras;
+
         this.sortearPalavra();
 
         console.log(this.palavra)

@@ -31,7 +31,7 @@ export class Progresso {
 
         this.atualizarDados(dados, acertou, linha);
 
-        this.repositorio.salvarDados(this.progresso)
+        this.repositorio.salvarDados(this.progresso);
     }
 
     private atualizarDados(dados: IProgresso, acertou: boolean, linha?: number): void {

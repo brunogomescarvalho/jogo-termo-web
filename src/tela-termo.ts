@@ -24,7 +24,6 @@ class telaTermo {
     constructor(jogo: jogo) {
 
         this.progresso = new Progresso(new Repositorio());
-        console.log(this.progresso)
         this.jogo = jogo;
         this.atribuirEventos();
         this.pnlTermo = document.getElementById('pnlTermo') as HTMLElement;
@@ -132,7 +131,16 @@ class telaTermo {
         button.addEventListener('click', () => this.reiniciarJogo());
         div.appendChild(button);
 
+        this.alterarStatusTeclado();
+
         return spanMsg;
+    }
+
+    private alterarStatusTeclado() {
+        for (let index = 0; index < this.pnlTeclado.children.length; index++) {
+            let tecla = this.pnlTeclado.children[index] as HTMLButtonElement;
+            tecla.disabled = !tecla.disabled;
+        }
     }
 
     private limparDados() {
@@ -156,6 +164,7 @@ class telaTermo {
             }
         }
         this.removerMsgFinal();
+        this.alterarStatusTeclado();
     }
 
     private removerMsgFinal() {
@@ -173,6 +182,9 @@ class telaTermo {
 
         const progresso = this.progresso.obterDados() as IProgresso;
         if (!progresso) return;
+
+        console.clear();
+        console.log(progresso)
 
         const valores = document.getElementById('valores') as HTMLDivElement;
         valores.children[0].textContent = progresso.jogos.toString();
