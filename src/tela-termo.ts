@@ -11,6 +11,7 @@ class telaTermo {
     celulas: HTMLElement[] = [];
     pnlTeclado: HTMLElement;
     btnEnter: HTMLButtonElement;
+    btnBack: HTMLButtonElement;
     pnlConteudo: HTMLElement;
     pnlTermo: HTMLElement;
     coluna: number = 0;
@@ -35,16 +36,29 @@ class telaTermo {
         this.btnEnter = document.getElementById('btnEnter') as HTMLButtonElement;
         this.btnEnter.addEventListener('click', () => this.verificarJogada());
 
+        this.btnBack = document.getElementById('btnBackspace') as HTMLButtonElement;
+        this.btnBack.addEventListener('click', () => this.corrigirInput());
+
         this.pnlTeclado = document.getElementById('pnlTeclado') as HTMLElement;
 
         for (let i = 0; i < this.pnlTeclado.children.length; i++) {
             const tecla = this.pnlTeclado.children.item(i) as HTMLButtonElement;
-            if (tecla.textContent != 'Enter')
+            if (tecla.textContent != 'Enter' && tecla.id != 'btnBackspace')
                 tecla.addEventListener('click', (sender) => this.atribuirLetra(sender));
         }
 
         this.btnHistorico = document.getElementById('btnHistorico') as HTMLButtonElement;
         this.btnHistorico.addEventListener('click', () => this.obterProgresso());
+    }
+    private corrigirInput(): any {
+        if (this.coluna == 0)
+            return;
+
+        let quadro = this.celulas[this.coluna - 1];
+        quadro.textContent = "";
+        this.celulas.pop();
+        this.coluna--;
+        this.palavra = this.palavra.substring(0, this.palavra.length - 1);
     }
 
     private verificarJogada(): void {
@@ -78,7 +92,7 @@ class telaTermo {
                     this.celulas[i].style.backgroundColor = '#0fda0fb6'
                     break;
                 case resultado.Erro:
-                    this.celulas[i].style.backgroundColor = '#ffff00ba '
+                    this.celulas[i].style.backgroundColor = '#ffff00fa'
                     break;
                 case resultado.Inexistente:
                     this.celulas[i].style.backgroundColor = '#e25858b3'
