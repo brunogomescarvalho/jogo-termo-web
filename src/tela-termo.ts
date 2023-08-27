@@ -62,6 +62,7 @@ class telaTermo {
     }
 
     private verificarJogada(): void {
+
         if (this.palavra.length !== this.maxCol)
             return;
 
@@ -197,7 +198,6 @@ class telaTermo {
         const progresso = this.progresso.obterDados() as IProgresso;
         if (!progresso) return;
 
-        console.clear();
         console.log(progresso)
 
         const valores = document.getElementById('valores') as HTMLDivElement;
@@ -217,3 +217,29 @@ class telaTermo {
 }
 
 window.addEventListener("load", () => new telaTermo(new jogo(new acervo())));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
