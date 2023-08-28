@@ -4,7 +4,7 @@ html {
   min-height: 100vh;
 }
 
-h1{
+h1 {
   color: #ffffff;
 }
 
@@ -88,6 +88,18 @@ body {
 .btn-reiniciar:hover {
   background-color: #27482e;
   border-radius: 5px;
+}
+
+.letra-correta{
+  background-color: #0fda0fb6 !important
+}
+
+.letra-incorreta {
+  background-color: #ffff00fa !important
+}
+
+.letra-inexistente {
+  background-color: #b85e5e !important
 }
 
 .group-mensagem {

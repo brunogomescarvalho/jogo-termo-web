@@ -64,13 +64,13 @@ class telaTermo {
         for (let i = 0; i <= this.palavra.length; i++) {
             switch (resultados[i]) {
                 case resultado.Acerto:
-                    this.letras[i].style.backgroundColor = '#0fda0fb6';
+                    this.letras[i].classList.add('letra-correta');
                     break;
                 case resultado.Erro:
-                    this.letras[i].style.backgroundColor = '#ffff00fa';
+                    this.letras[i].classList.add('letra-incorreta');
                     break;
                 case resultado.Inexistente:
-                    this.letras[i].style.backgroundColor = '#b85e5e';
+                    this.letras[i].classList.add('letra-inexistente');
                     break;
             }
         }
@@ -110,6 +110,14 @@ class telaTermo {
         this.coluna--;
         this.palavra = this.palavra.substring(0, this.palavra.length - 1);
     }
+    reiniciarJogo() {
+        this.limparDados();
+        this.linha = 0;
+        this.jogo = new jogo(new acervo());
+        this.limparQuadros();
+        this.removerMsgFinal();
+        this.alterarStatusTeclado();
+    }
     alterarStatusTeclado() {
         for (let index = 0; index < this.pnlTeclado.children.length; index++) {
             let tecla = this.pnlTeclado.children[index];
@@ -127,20 +135,15 @@ class telaTermo {
             this.pnlConteudo.removeChild(mensagemFinal);
         }
     }
-    reiniciarJogo() {
-        this.limparDados();
-        this.linha = 0;
-        this.jogo = new jogo(new acervo());
+    limparQuadros() {
         for (let i = 0; i < this.pnlTermo.children.length; i++) {
             const linha = this.pnlTermo.children.item(i);
             for (let index = 0; index < linha.children.length; index++) {
                 const letra = linha.children.item(index);
-                letra.style.backgroundColor = '#bebebe';
+                letra.classList.remove('letra-correta', 'letra-incorreta', 'letra-inexistente');
                 letra.textContent = '';
             }
         }
-        this.removerMsgFinal();
-        this.alterarStatusTeclado();
     }
     salvarProgresso(acertou, linha) {
         this.progresso.atualizarJogada(acertou, linha);

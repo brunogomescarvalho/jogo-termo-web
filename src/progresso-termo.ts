@@ -37,10 +37,10 @@ export class Progresso {
 
         this.progresso.jogos++;
 
-        if (!acertou)
-            this.progresso.erros++;
-        else
+        if (acertou)
             this.progresso.linhaDaJogada[linha!]++;
+        else
+            this.progresso.erros++;
 
         this.calcularSequencia(acertou);
 
@@ -69,6 +69,5 @@ export class Progresso {
 
         if (this.progresso.sequenciaVitorias > this.progresso.melhorSequencia)
             this.progresso.melhorSequencia = this.progresso.sequenciaVitorias;
-
     }
 }

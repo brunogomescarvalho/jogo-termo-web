@@ -89,13 +89,13 @@ class telaTermo {
         for (let i = 0; i <= this.palavra.length; i++) {
             switch (resultados[i]) {
                 case resultado.Acerto:
-                    this.letras[i].style.backgroundColor = '#0fda0fb6'
+                    this.letras[i].classList.add('letra-correta');
                     break;
                 case resultado.Erro:
-                    this.letras[i].style.backgroundColor = '#ffff00fa'
+                    this.letras[i].classList.add('letra-incorreta');
                     break;
                 case resultado.Inexistente:
-                    this.letras[i].style.backgroundColor = '#b85e5e'
+                    this.letras[i].classList.add('letra-inexistente');
                     break;
             }
         }
@@ -182,7 +182,7 @@ class telaTermo {
             const linha = this.pnlTermo.children.item(i) as HTMLElement;
             for (let index = 0; index < linha.children.length; index++) {
                 const letra = linha.children.item(index) as HTMLElement;
-                letra.style.backgroundColor = '#bebebe';
+                letra.classList.remove('letra-correta', 'letra-incorreta', 'letra-inexistente');
                 letra.textContent = '';
             }
         }
