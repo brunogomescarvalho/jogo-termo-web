@@ -1,10 +1,13 @@
 export class Repositorio {
+    constructor() {
+        this.key = 'jogoTermo:progresso';
+    }
     salvarDados(progresso) {
         const progressoEmString = JSON.stringify(progresso);
-        window.localStorage.setItem('progresso', progressoEmString);
+        localStorage.setItem(this.key, progressoEmString);
     }
     obterDados() {
-        const dados = window.localStorage.getItem('progresso');
+        const dados = localStorage.getItem(this.key);
         let progresso;
         if (dados) {
             progresso = JSON.parse(dados);

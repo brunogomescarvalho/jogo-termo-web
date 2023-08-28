@@ -22,10 +22,10 @@ export class Progresso {
         if (dados)
             this.progresso = dados;
         this.progresso.jogos++;
-        if (!acertou)
-            this.progresso.erros++;
-        else
+        if (acertou)
             this.progresso.linhaDaJogada[linha]++;
+        else
+            this.progresso.erros++;
         this.calcularSequencia(acertou);
         this.calcularPorcentagem();
     }
