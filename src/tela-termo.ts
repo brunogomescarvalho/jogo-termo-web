@@ -5,7 +5,7 @@ import { IProgresso } from "./IProgresso.js";
 import { Repositorio } from "./repositorio-termo.js";
 
 class telaTermo {
-  
+
     pnlTeclado: HTMLElement;
     btnEnter: HTMLButtonElement;
     btnHistorico: HTMLButtonElement;
@@ -14,7 +14,7 @@ class telaTermo {
     pnlTermo: HTMLElement;
     letras: HTMLElement[] = [];
     maxCol: number = 5;
-    maxRow: number = 5;  
+    maxRow: number = 5;
     coluna: number = 0;
     linha: number = 0;
     palavra: string = "";
@@ -146,6 +146,17 @@ class telaTermo {
         this.palavra = this.palavra.substring(0, this.palavra.length - 1);
     }
 
+    private reiniciarJogo() {
+        this.limparDados();
+        this.linha = 0;
+
+        this.jogo = new jogo(new acervo());
+
+        this.limparQuadros();
+        this.removerMsgFinal();
+        this.alterarStatusTeclado();
+    }
+
     private alterarStatusTeclado() {
         for (let index = 0; index < this.pnlTeclado.children.length; index++) {
             let tecla = this.pnlTeclado.children[index] as HTMLButtonElement;
@@ -166,12 +177,7 @@ class telaTermo {
         }
     }
 
-    private reiniciarJogo() {
-        this.limparDados();
-        this.linha = 0;
-
-        this.jogo = new jogo(new acervo());
-
+    private limparQuadros() {
         for (let i = 0; i < this.pnlTermo.children.length; i++) {
             const linha = this.pnlTermo.children.item(i) as HTMLElement;
             for (let index = 0; index < linha.children.length; index++) {
@@ -180,8 +186,6 @@ class telaTermo {
                 letra.textContent = '';
             }
         }
-        this.removerMsgFinal();
-        this.alterarStatusTeclado();
     }
 
     private salvarProgresso(acertou: boolean, linha?: number) {

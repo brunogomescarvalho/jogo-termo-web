@@ -3,13 +3,9 @@ import { Repositorio } from "./repositorio-termo";
 
 export class Progresso {
 
-    progresso: IProgresso
+    private progresso: IProgresso
 
-    repositorio: Repositorio
-
-    constructor(repositorio: Repositorio) {
-
-        this.repositorio = repositorio;
+    constructor(private repositorio: Repositorio) {
 
         this.progresso = {
             jogos: 0,
