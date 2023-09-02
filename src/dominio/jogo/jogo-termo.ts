@@ -11,7 +11,7 @@ export class jogo {
         this.sortearPalavra();
 
         console.log(this.palavra);
-        console.log(this.listaPalavras.length);
+
     }
 
     public getPalavra() {
